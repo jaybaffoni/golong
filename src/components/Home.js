@@ -10,23 +10,39 @@ class Home extends Component {
         this.state = {user: localStorage.getItem('user'), name: '', players:[], page:0};
         console.log(this.state.user);
         this.logout = this.logout.bind(this);
-        this.supplyName = this.supplyName.bind(this);
         this.getPlayers = this.getPlayers.bind(this);
         this.getRows = this.getRows.bind(this);
+        this.prev = this.prev.bind(this);
+        this.next = this.next.bind(this);
 
-        this.getPlayers();
+        this.getPlayers(0);
+    }
+
+    prev(){
+        var page = this.state.page;
+        console.log(page);
+        if(this.state.page > 0){
+            page = page - 1;
+            this.getPlayers(page);
+            this.setState({page:page});
+        }
+    }
+
+    next(){
+        var page = this.state.page;
+        console.log(page);
+        page = page + 1;
+        this.getPlayers(page);
+        this.setState({page:page});
     }
 
     logout() {
         fire.auth().signOut();
     }
 
-    supplyName(){
-        this.setState({name: 'THIS IS A NAME'});
-    }
-
-    getPlayers(){                       
-        axios.get('https://go-long-ff.herokuapp.com/players/' + this.state.page)
+    getPlayers(page){     
+        console.log(page);                 
+        axios.get('https://go-long-ff.herokuapp.com/v1/players/' + page)
           .then((response) => {
                 console.log(response.data);
                 this.setState({players: response.data});
@@ -41,7 +57,12 @@ class Home extends Component {
             //var object = this.state.games[key];
             return(
                     // <PickRow key={i} obj={object} k={object.game_id} />
-                    <p key={i} k={object.playerid}>{object.lastname}, {object.firstname}</p>
+                    <tr key={i}>
+                        <td>{object.lastname}, {object.firstname}</td>
+                        <td>{object.position}</td>
+                        <td>{object.team}</td>
+                        <td>{object.price}</td>
+                    </tr>
                 )
             
         })
@@ -53,7 +74,7 @@ class Home extends Component {
                 <h1 className="white-text">Welcome {this.state.user}</h1>
                 <Button color="primary" onClick={this.logout}>Sign Out</Button> 
 
-                <table>
+                <table style={{width:"100%"}}>
                     <tbody>
                         <tr>
                             <th>Name</th>
@@ -64,6 +85,11 @@ class Home extends Component {
                         {this.getRows()}
                     </tbody>
                 </table>
+                <div style={{width:"100%"}} display="inline-block">
+                    <Button color="primary" onClick={this.prev}>Prev Page</Button> 
+                    <Button color="primary" onClick={this.next} style={{float:"right"}}>Next Page</Button> 
+                </div>
+                
                 
             </div>
     );
