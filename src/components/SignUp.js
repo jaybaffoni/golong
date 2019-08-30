@@ -10,6 +10,7 @@ class SignUp extends Component {
         this.signup = this.signup.bind(this);
         this.state = {
           email: '',
+          displayname:'',
           password: '',
           confirm:''
         };
@@ -26,8 +27,11 @@ class SignUp extends Component {
         return;
       }
       console.log('Signing up');
-      fire.auth().createUserWithEmailAndPassword(this.state.email, this.state.password).then((u)=>{
-      }).then((u)=>{console.log(u)})
+      localStorage.setItem('udisplayname', this.state.displayname);
+      fire.auth().createUserWithEmailAndPassword(this.state.email, this.state.password)
+      .then((u)=>{
+        
+      })
       .catch((error) => {
           console.log(error);
       });
@@ -36,11 +40,11 @@ class SignUp extends Component {
     render() {
         return (
             <div className="login-card">
-                    <h1>Go Long</h1>
-                    <p style={{marginTop: 15}} >Register a new account </p>
+                <h1>Go Long</h1>
+                    <p >Register a new account </p>
                     <form>
                       <div className="grey-text">
-                        <Input label="Enter a username" group type="email" name="email" onChange={this.handleChange} validate error="wrong" success="right" value={this.state.user_name}/>
+                        <Input label="Enter your email" group type="email" name="email" onChange={this.handleChange} validate error="wrong" success="right" value={this.state.email}/>
                         <Input label="Enter a password" group type="password" name="password" onChange={this.handleChange} validate value={this.state.password}/>
                         <Input label="Confirm your password" group type="password" name="confirm" onChange={this.handleChange} validate value={this.state.confirm}/>
                       </div>
@@ -48,7 +52,7 @@ class SignUp extends Component {
                     <Button block color="primary" onClick={this.signup}>Sign Up</Button>
                     </form>
                     <p style={{marginTop: 15}} >Already have an account? </p>
-                    <Button block color="elegant" onClick={this.props.switch}>Sign In</Button> 
+                    <Button size="sm" block color="elegant" onClick={this.props.switch}>Sign In</Button> 
                 </div>
     );
   }

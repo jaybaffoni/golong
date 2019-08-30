@@ -1,22 +1,29 @@
 
+html { overflow-y: scroll; }
 
-.App {
+body {
   background-color: #282c34;
   min-height: 100vh;
   height: 100%;
-  padding-top: 2%;
-  padding-left: 25px;
-  padding-right: 25px;
+}
+
+.header-text{
+  text-align:center;
+  color:whitesmoke;
 }
 
 table td{
   color: white;
-  font-size: 35px;
+  font-size: 20px;
 }
 
 table th{
   color: white;
-  font-size: 35px;
+  font-size: 20px;
+}
+
+tr:nth-child(even) {
+  background-color: #555555;
 }
 
 .dark-table td{

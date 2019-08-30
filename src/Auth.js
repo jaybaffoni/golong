@@ -5,8 +5,10 @@ import SignUp from './components/SignUp';
 class Auth extends Component {
     constructor(props) {
         super(props);
+        console.log(props);
         this.switchView = this.switchView.bind(this);
         this.state = {signin: true};
+        
     }
 
     switchView(){
@@ -17,13 +19,13 @@ class Auth extends Component {
     render() {
         return (
             <div className="App">
-                
-                {this.state.signin &&
+                <div style={{paddingTop:"25px"}}>
+                {this.state.signin ?
                     <SignIn switch={this.switchView}/>
-                }
-                {!this.state.signin &&
+                :
                     <SignUp switch={this.switchView}/>
                 }
+                </div>
 
             </div>
         );
