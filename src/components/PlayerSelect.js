@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Button, Input, MDBContainer, MDBBtn, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter } from 'mdbreact';
+import { Button, Input, MDBContainer, MDBBtn, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter,
+         MDBDropdown, MDBDropdownToggle, MDBDropdownMenu, MDBDropdownItem } from 'mdbreact';
 import axios from 'axios';
 import PlayerRow from './PlayerRow';
 import queryString from 'qs';
@@ -8,7 +9,11 @@ class PlayerSelect extends Component {
     
     constructor(props){
         super(props);
-        this.state = { userid: props.user.userid, players:[], page:0, modal:false, selectedPlayer:{}, shares: ''};
+        if(!props.league){
+            props.history.push('leagues');
+            return;
+        }
+        this.state = { userid: props.user.userid, players:[], page:0, modal:false, selectedPlayer:{}, shares: '', position:'All'};
         this.getPlayers = this.getPlayers.bind(this);
         this.getRows = this.getRows.bind(this);
         this.prev = this.prev.bind(this);
@@ -17,8 +22,9 @@ class PlayerSelect extends Component {
         this.confirmBuy = this.confirmBuy.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.back = this.back.bind(this);
+        this.clicked = this.clicked.bind(this);
 
-        this.getPlayers(0);
+        this.getPlayers(0, '');
     }
 
     prev(){
@@ -43,9 +49,11 @@ class PlayerSelect extends Component {
         this.setState({selectedPlayer:obj, modal:true});
     }
 
-    getPlayers(page){     
-        console.log(page);                 
-        axios.get('https://go-long-ff.herokuapp.com/v1/players/' + page)
+    getPlayers(page, pos){
+        console.log(pos);                 
+        var url = 'https://go-long-ff.herokuapp.com/v1/players/' + page + '/' + pos;
+        console.log(url);
+        axios.get(url)
           .then((response) => {
                 this.setState({players: response.data});
             })
@@ -85,7 +93,7 @@ class PlayerSelect extends Component {
         axios.post('https://go-long-ff.herokuapp.com/v1/share/buy', queryString.stringify(data))
             .then((response) => {
                 this.setState({shares:''});
-
+                this.props.history.push('home');
             })
             .catch((error) => {
                 console.log(error);
@@ -104,6 +112,14 @@ class PlayerSelect extends Component {
 
     back(){
         this.props.history.push('/home');
+    }
+
+    clicked(e){
+        console.log(e.target.name);
+        var pos = e.target.name;
+        this.setState({position:pos, page:0});
+        if(pos === 'All') pos = '';
+        this.getPlayers(0, pos);
     }
     
     render() {
@@ -131,7 +147,18 @@ class PlayerSelect extends Component {
                     <tbody>
                         <tr>
                             <th>Name</th>
-                            <th style={{textAlign:"right"}}>Position</th> 
+                            <th><MDBDropdown>
+                                <MDBDropdownToggle caret color="danger">
+                                    {this.state.position}
+                                </MDBDropdownToggle>
+                                <MDBDropdownMenu basic>
+                                    <MDBDropdownItem name="All" onClick={this.clicked}>All</MDBDropdownItem>
+                                    <MDBDropdownItem name="QB" onClick={this.clicked}>QB</MDBDropdownItem>
+                                    <MDBDropdownItem name="RB" onClick={this.clicked}>RB</MDBDropdownItem>
+                                    <MDBDropdownItem name="WR" onClick={this.clicked}>WR</MDBDropdownItem>
+                                    <MDBDropdownItem name="TE" onClick={this.clicked}>TE</MDBDropdownItem>
+                                </MDBDropdownMenu>
+                            </MDBDropdown></th> 
                             <th style={{textAlign:"right"}}>Team</th>
                             <th style={{textAlign:"right"}}>Price</th>
                             <th></th>

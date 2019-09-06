@@ -34,7 +34,6 @@ class JoinLeague extends Component {
             .then((response) => {
                 this.getLeagues();
                 this.props.callback();
-                //this.props.setLeague();
             })
             .catch((error) => {
                 console.log(error);

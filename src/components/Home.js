@@ -7,16 +7,21 @@ class Home extends Component {
         super(props);
         this.state = {user:props.user, name: '', isOpen:false};
         this.addPlayers = this.addPlayers.bind(this);
+        this.selectLeague = this.selectLeague.bind(this);
     }
 
     addPlayers(){
         this.props.history.push('/add');
     }
+
+    selectLeague(){
+        this.props.history.push('/leagues');
+    }
     
     render() {
         return (
             <div>
-                <Roster callback={this.addPlayers} league={this.props.league} user={this.state.user}/>
+                <Roster callback={this.addPlayers} league={this.props.league} user={this.state.user} selectLeague={this.selectLeague}/>
                 
             </div>
     );
