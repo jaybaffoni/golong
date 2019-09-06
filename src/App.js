@@ -4,8 +4,9 @@ import Auth from './Auth';
 import Home from './components/Home';
 import Leagues from './components/Leagues';
 import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
-import { Navbar, NavbarBrand, NavbarToggler, Collapse, NavbarNav, NavItem, NavLink,
-         Dropdown, DropdownMenu, DropdownToggle } from 'mdbreact';
+import { Input,
+         Navbar, NavbarBrand, NavbarToggler, Collapse, NavbarNav, NavItem, NavLink, Dropdown, DropdownMenu, DropdownItem, DropdownToggle,
+         MDBContainer, MDBBtn, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter } from 'mdbreact';
 import fire from './Fire';
 import axios from 'axios';
 import queryString from 'qs'
@@ -22,7 +23,11 @@ class App extends Component {
       isWideEnough: false,
       loading: true,
       league: JSON.parse(localStorage.getItem('league')),
-      leagues:[]
+      leagues:[],
+      modal:false,
+      newLeagueName:'',
+      newLeaguePassword:'',
+      newLeagueConfirm:''
     });
     this.onClick = this.onClick.bind(this);
     this.authListener = this.authListener.bind(this);
@@ -30,16 +35,13 @@ class App extends Component {
     this.logout = this.logout.bind(this);
     this.setLeague = this.setLeague.bind(this);
     this.getLeagues = this.getLeagues.bind(this);
+    this.createClicked = this.createClicked.bind(this);
+    this.confirmCreate = this.confirmCreate.bind(this);
+    this.handleChange = this.handleChange.bind(this);
 
-    console.log('user:');
-    console.log(this.state.user);
-    console.log('league:');
-    console.log(this.state.league);
   }
 
   getLeagues(){
-
-    console.log(this.state.user);
 
     var data = {
         userid: this.state.user
@@ -128,6 +130,45 @@ authListener() {
       fire.auth().signOut();
   }
 
+  createClicked(){
+    this.setState({modal:true});
+}
+
+confirmCreate(){
+
+    if(this.state.newLeaguePassword !== this.state.newLeagueConfirm){
+        console.log("passwords don't match");
+        return;
+    }
+
+    this.setState({modal:false});
+
+    var data = {
+        userid: this.state.user.userid,
+        name: this.state.newLeagueName,
+        // password: this.state.password
+    }
+
+    axios.post('https://go-long-ff.herokuapp.com/v1/league', queryString.stringify(data))
+        .then((response) => {
+            this.getLeagues();
+
+        })
+        .catch((error) => {
+            console.log(error);
+        });   
+}
+
+toggle = () => {
+    this.setState({
+      modal: !this.state.modal
+    });
+  }
+
+  handleChange(e) {
+    this.setState({ [e.target.name]: e.target.value });
+  }
+
   render() {
     return (
       <div>
@@ -152,6 +193,12 @@ authListener() {
                               </DropdownToggle>
                               <DropdownMenu>
                                 {this.showLeagues()}
+                                <DropdownItem>
+                                    <NavLink style={{color:'black'}} to="/join">Join League</NavLink>
+                                </DropdownItem>
+                                <DropdownItem>
+                                    <NavLink onClick={this.createClicked} style={{color:'black'}} to="#">Create League</NavLink>
+                                </DropdownItem>
                               </DropdownMenu>
                             </Dropdown>
                         </NavItem>
@@ -161,12 +208,26 @@ authListener() {
                     </NavbarNav>
                 </Collapse>
             </Navbar>
+            <MDBContainer>
+                <MDBModal isOpen={this.state.modal} toggle={this.toggle}    >
+                <MDBModalHeader toggle={this.toggle}>Create New League</MDBModalHeader>
+                <MDBModalBody>
+                    <Input label="Enter league name" group name="newLeagueName" onChange={this.handleChange} validate value={this.state.newLeagueName}/>
+                    <Input label="Enter a password (optional)" group type="password" name="newLeaguePassword" onChange={this.handleChange} validate value={this.state.newLeaguePassword}/>
+                    <Input label="Confirm your password" group type="password" name="newLeagueConfirm" onChange={this.handleChange} validate value={this.state.newLeagueConfirm}/>
+                </MDBModalBody>
+                <MDBModalFooter>
+                    <MDBBtn color="elegant" onClick={this.toggle}>Close</MDBBtn>
+                    <MDBBtn color="primary" onClick={this.confirmCreate}>Create</MDBBtn>
+                </MDBModalFooter>
+                </MDBModal>
+            </MDBContainer>
             <div style={{paddingTop:"75px", paddingRight:'10px', paddingLeft:'10px'}}>
                 <Switch>
-                    <PrivateRoute path="/leagues" component={Leagues} callback={this.setLeague}/>
+                    <PrivateRoute path="/leagues" component={Leagues} callback={this.setLeague} league={this.state.league} getLeagues={this.getLeagues}/>
                     <PrivateRoute path="/home" component={Home} league={this.state.league}/>
                     <PrivateRoute path="/add" component={PlayerSelect} league={this.state.league}/>
-                    <PrivateRoute path="/join" component={JoinLeague}/>
+                    <PrivateRoute path="/join" component={JoinLeague} league={this.state.league} callback={this.getLeagues} setLeague={this.setLeague}/>
                     <Route path="*" render={() => <Redirect to="/leagues" />} />
                 </Switch>
             </div>

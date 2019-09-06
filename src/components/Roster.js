@@ -3,7 +3,6 @@ import { Button, Input, MDBContainer, MDBBtn, MDBModal, MDBModalBody, MDBModalHe
 import axios from 'axios';
 import queryString from 'qs';
 import RosterRow from './RosterRow';
-import { tsImportEqualsDeclaration } from '@babel/types';
 
 class Roster extends Component {
     
@@ -75,7 +74,6 @@ class Roster extends Component {
 
         axios.post('https://go-long-ff.herokuapp.com/v1/shares', queryString.stringify(data))
             .then((response) => {
-                console.log(response.data);
                 var cash = null;
                 var newPlayers = [];
                 for(var i = 0; i < response.data.length; i++){

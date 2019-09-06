@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Input, MDBContainer, MDBBtn, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter } from 'mdbreact';
+import { Input, MDBContainer, MDBBtn, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter } from 'mdbreact';
 import axios from 'axios';
 import queryString from 'qs'
 import MyLeagueRow from './MyLeagueRow'
@@ -17,14 +17,13 @@ class Leagues extends Component {
         this.setLeague = this.setLeague.bind(this);
         this.confirmCreate = this.confirmCreate.bind(this);
         this.handleChange = this.handleChange.bind(this);
+        this.leave = this.leave.bind(this);
 
         this.getLeagues();
         
     }
 
     setLeague(e){
-        console.log('test');
-        console.log(e);
         this.props.callback(e);
         this.props.history.push('/home');
     }
@@ -46,7 +45,7 @@ class Leagues extends Component {
     getRows(){
         return this.state.leagues.map((object, i) => {
             return(
-                    <MyLeagueRow key={i} obj={object} callback={this.setLeague}/>
+                    <MyLeagueRow key={i} obj={object} callback={this.setLeague} leave={this.leave}/>
                 )
             
         })
@@ -94,6 +93,29 @@ class Leagues extends Component {
       handleChange(e) {
         this.setState({ [e.target.name]: e.target.value });
       }
+
+    leave(league){
+    var data = {
+        userid: this.state.userid,
+        entryid: league.entryid
+    }
+
+    axios.post('https://go-long-ff.herokuapp.com/v1/league/leave', queryString.stringify(data))
+        .then((response) => {
+            this.getLeagues();
+            console.log(this.props.league.entryid);
+            console.log(data.entryid);
+            if(this.props.league.entryid === data.entryid){
+                console.log('nullify');
+                this.props.callback(null);
+            }
+            this.props.getLeagues();
+            
+        })
+        .catch((error) => {
+            console.log(error);
+        });   
+    }
     
     render() {
         return (
@@ -115,11 +137,10 @@ class Leagues extends Component {
                 <h1 className="white-text">My Leagues</h1>
                 {(!this.state.loading && this.state.leagues.length === 0) && <p className="white-text">You aren't part of any leagues</p>}
                 {this.state.loading && <p className="white-text">Loading...</p>}
-                {this.getRows()}
-                <div  display="inline-block">
-                    <Button color="primary" onClick={this.joinClicked} style={{float:"right"}}>Join League</Button> 
-                    <Button color="primary" onClick={this.createClicked} style={{float:"right"}}>Create League</Button> 
+                <div className="row">
+                    {this.getRows()}
                 </div>
+                
             </div>
     );
   }
