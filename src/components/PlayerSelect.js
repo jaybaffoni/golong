@@ -47,7 +47,6 @@ class PlayerSelect extends Component {
         console.log(page);                 
         axios.get('https://go-long-ff.herokuapp.com/v1/players/' + page)
           .then((response) => {
-                console.log(response.data);
                 this.setState({players: response.data});
             })
           .catch((error) => {

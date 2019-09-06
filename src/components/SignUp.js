@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Button, Input } from 'mdbreact';
+import { Button, Input,
+         MDBContainer, MDBBtn, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter } from 'mdbreact';
 import fire from '../Fire';
 
 class SignUp extends Component {
@@ -12,7 +13,9 @@ class SignUp extends Component {
           email: '',
           displayname:'',
           password: '',
-          confirm:''
+          confirm:'',
+          modal:false,
+          error:''
         };
     }
     
@@ -23,7 +26,7 @@ class SignUp extends Component {
     signup(e){
       e.preventDefault();
       if(this.state.password !== this.state.confirm){
-        console.log("passwords don't match");
+        this.setState({modal:true, error:{message:"Passwords don't match"}});
         return;
       }
       console.log('Signing up');
@@ -33,27 +36,47 @@ class SignUp extends Component {
         
       })
       .catch((error) => {
-          console.log(error);
+          this.setState({modal:true, error:error});
+      });
+    }
+
+    toggle = () => {
+      this.setState({
+        modal: !this.state.modal
       });
     }
 
     render() {
         return (
-            <div className="login-card">
+            <div>
+                <MDBContainer>
+                  <MDBModal isOpen={this.state.modal} toggle={this.toggle}    >
+                    <MDBModalHeader toggle={this.toggle}>Sign Up Error</MDBModalHeader>
+                    <MDBModalBody>
+                      {this.state.error.message}
+                    </MDBModalBody>
+                    <MDBModalFooter>
+                      <MDBBtn color="primary" onClick={this.toggle}>Close</MDBBtn>
+                    </MDBModalFooter>
+                  </MDBModal>
+                </MDBContainer>
+                <div className="login-card">
                 <h1>Go Long</h1>
-                    <p >Register a new account </p>
-                    <form>
-                      <div className="grey-text">
-                        <Input label="Enter your email" group type="email" name="email" onChange={this.handleChange} validate error="wrong" success="right" value={this.state.email}/>
-                        <Input label="Enter a password" group type="password" name="password" onChange={this.handleChange} validate value={this.state.password}/>
-                        <Input label="Confirm your password" group type="password" name="confirm" onChange={this.handleChange} validate value={this.state.confirm}/>
-                      </div>
-                    {this.state.error && (<p className="error-text">{this.state.message}</p>)}
-                    <Button block color="primary" onClick={this.signup}>Sign Up</Button>
-                    </form>
-                    <p style={{marginTop: 15}} >Already have an account? </p>
-                    <Button size="sm" block color="elegant" onClick={this.props.switch}>Sign In</Button> 
-                </div>
+                <p >Register a new account </p>
+                <form>
+                  <div className="grey-text">
+                    <Input label="Enter your email" group type="email" name="email" onChange={this.handleChange} validate error="wrong" success="right" value={this.state.email}/>
+                    <Input label="Enter a password" group type="password" name="password" onChange={this.handleChange} validate value={this.state.password}/>
+                    <Input label="Confirm your password" group type="password" name="confirm" onChange={this.handleChange} validate value={this.state.confirm}/>
+                  </div>
+                {this.state.error && (<p className="error-text">{this.state.message}</p>)}
+                <Button block color="primary" onClick={this.signup}>Sign Up</Button>
+                </form>
+                <p style={{marginTop: 15}} >Already have an account? </p>
+                <Button size="sm" block color="elegant" onClick={this.props.switch}>Sign In</Button> 
+            </div>
+            </div>
+            
     );
   }
 }

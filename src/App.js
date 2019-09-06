@@ -184,9 +184,6 @@ toggle = () => {
                 <Collapse isOpen = { this.state.collapse } navbar>
                     <NavbarNav right>
                         <NavItem>
-                            <NavLink to="/leagues">Home</NavLink>
-                        </NavItem>
-                        <NavItem>
                             <Dropdown>
                               <DropdownToggle nav caret>
                                 <span className="mr-2">{!this.state.league ? 'Select League' : this.state.league.leaguename}</span>
@@ -201,6 +198,12 @@ toggle = () => {
                                 </DropdownItem>
                               </DropdownMenu>
                             </Dropdown>
+                        </NavItem>
+                        <NavItem>
+                            <NavLink to="/leagues">Dashboard</NavLink>
+                        </NavItem>
+                        <NavItem>
+                            <NavLink to="/">Standings</NavLink>
                         </NavItem>
                         {/* <NavItem>
                             {this.state.cash && <NavLink to="/add">Cash: {this.state.cash}</NavLink>}

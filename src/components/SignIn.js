@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Button, Input } from 'mdbreact';
+import { Button, Input,
+         MDBContainer, MDBBtn, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter} from 'mdbreact';
 import fire from '../Fire';
 
 class SignIn extends Component {
@@ -12,7 +13,15 @@ class SignIn extends Component {
         this.state = {
             email: '',
             password: '',
+            modal:false,
+            error:''
           };        
+    }
+
+    toggle = () => {
+      this.setState({
+        modal: !this.state.modal
+      });
     }
 
     handleChange(e) {
@@ -22,16 +31,29 @@ class SignIn extends Component {
       login(e) {
         e.preventDefault();
         fire.auth().signInWithEmailAndPassword(this.state.email, this.state.password).then((u)=>{
-          console.log(u)
+
         }).catch((error) => {
-            console.log(error);
+          this.setState({modal:true, error:error});
         });
       }
     
     render() {
         return (
-            <div className="login-card">
-                <h1>Go Long</h1>
+            <div>
+                <MDBContainer>
+                  <MDBModal isOpen={this.state.modal} toggle={this.toggle}    >
+                    <MDBModalHeader toggle={this.toggle}>Sign In Error</MDBModalHeader>
+                    <MDBModalBody>
+                      {this.state.error.message}
+                    </MDBModalBody>
+                    <MDBModalFooter>
+                      <MDBBtn color="primary" onClick={this.toggle}>Close</MDBBtn>
+                    </MDBModalFooter>
+                  </MDBModal>
+                </MDBContainer>
+            
+                <div className="login-card">
+                    <h1>Go Long</h1>
                     <p >Sign in to your account </p>
                     <form>
                       <div className="grey-text">
@@ -43,6 +65,7 @@ class SignIn extends Component {
                     <p style={{marginTop: 15}} >Don't have an account?</p>
                     <Button size="sm" block color="elegant" onClick={this.props.switch}>Sign Up</Button> 
                 </div>
+            </div>
     );
   }
 }
