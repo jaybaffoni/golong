@@ -8,7 +8,7 @@ class Leagues extends Component {
     
     constructor(props){
         super(props);
-        this.state = {leagues:[], loading:true, userid:localStorage.getItem("uid"), modal:false,
+        this.state = {leagues:[], loading:true, userid:props.user.userid, modal:false,
                       name:'', password:'', confirm:''};
 
         this.joinClicked = this.joinClicked.bind(this);

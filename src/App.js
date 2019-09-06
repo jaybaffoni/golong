@@ -18,16 +18,16 @@ class App extends Component {
   constructor() {
     super();
     this.state = ({
-      user: JSON.parse(localStorage.getItem('user')),
       collapse: false,
       isWideEnough: false,
       loading: true,
-      league: JSON.parse(localStorage.getItem('league')),
+      league: null,
       leagues:[],
       modal:false,
       newLeagueName:'',
       newLeaguePassword:'',
-      newLeagueConfirm:''
+      newLeagueConfirm:'',
+      user: fire.auth().currentUser
     });
     this.onClick = this.onClick.bind(this);
     this.authListener = this.authListener.bind(this);
@@ -38,6 +38,8 @@ class App extends Component {
     this.createClicked = this.createClicked.bind(this);
     this.confirmCreate = this.confirmCreate.bind(this);
     this.handleChange = this.handleChange.bind(this);
+
+    console.log(fire.auth().currentUser);
 
   }
 
@@ -68,7 +70,7 @@ class App extends Component {
 
   setLeague(league){
       console.log(league);
-      localStorage.setItem('league', JSON.stringify(league));
+      // localStorage.setItem('league', JSON.stringify(league));
       this.setState({league:league});
   }
 
@@ -106,20 +108,20 @@ authListener() {
                 console.log(error);
             });        
       } else {
-        localStorage.removeItem('user');
-        localStorage.removeItem('uid');
-        localStorage.removeItem('uemail');
-        localStorage.removeItem('udisplayname');
+        // localStorage.removeItem('user');
+        // localStorage.removeItem('uid');
+        // localStorage.removeItem('uemail');
+        // localStorage.removeItem('udisplayname');
         this.setState({user:null})
       }
     });
   }
 
   setUserState(user){
-      localStorage.setItem('user', JSON.stringify(user));
-      localStorage.setItem('uid', user.userid);
-      localStorage.setItem('uemail', user.email);
-      localStorage.setItem('udisplayname', user.name);
+      // localStorage.setItem('user', JSON.stringify(user));
+      // localStorage.setItem('uid', user.userid);
+      // localStorage.setItem('uemail', user.email);
+      // localStorage.setItem('udisplayname', user.name);
       if(user.name === ''){
           user.name = user.email;
       }
@@ -227,10 +229,10 @@ toggle = () => {
             </MDBContainer>
             <div style={{paddingTop:"75px", paddingRight:'10px', paddingLeft:'10px'}}>
                 <Switch>
-                    <PrivateRoute path="/leagues" component={Leagues} callback={this.setLeague} league={this.state.league} getLeagues={this.getLeagues}/>
-                    <PrivateRoute path="/home" component={Home} league={this.state.league}/>
-                    <PrivateRoute path="/add" component={PlayerSelect} league={this.state.league}/>
-                    <PrivateRoute path="/join" component={JoinLeague} league={this.state.league} callback={this.getLeagues} setLeague={this.setLeague}/>
+                    <PrivateRoute path="/leagues" component={Leagues} user={this.state.user} callback={this.setLeague} league={this.state.league} getLeagues={this.getLeagues}/>
+                    <PrivateRoute path="/home" component={Home} league={this.state.league} user={this.state.user}/>
+                    <PrivateRoute path="/add" component={PlayerSelect} user={this.state.user} league={this.state.league}/>
+                    <PrivateRoute path="/join" component={JoinLeague} user={this.state.user} league={this.state.league} callback={this.getLeagues} setLeague={this.setLeague}/>
                     <Route path="*" render={() => <Redirect to="/leagues" />} />
                 </Switch>
             </div>
@@ -243,8 +245,9 @@ toggle = () => {
 }
 
 const PrivateRoute = ({ component: Component, ...rest }) => (
+  
   <Route {...rest} render={(props) => (
-    localStorage.getItem('uid')
+    fire.auth().currentUser
       ? <Component {...props} {...rest}/>
       : <Redirect to={{
           pathname: '/signin'

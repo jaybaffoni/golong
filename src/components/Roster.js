@@ -8,7 +8,7 @@ class Roster extends Component {
     
     constructor(props){
         super(props);
-        this.state = {update:false, league:props.league, cash:null, players: [], userid: localStorage.getItem('uid'), selectedPlayer:{}, shares:''};
+        this.state = {update:false, league:props.league, cash:null, players: [], userid: props.user.userid, selectedPlayer:{}, shares:''};
         this.addPlayers = this.addPlayers.bind(this);
         this.sell = this.sell.bind(this);
         this.confirmSell = this.confirmSell.bind(this);

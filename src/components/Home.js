@@ -5,7 +5,7 @@ class Home extends Component {
     
     constructor(props){
         super(props);
-        this.state = {user: localStorage.getItem('user'), name: '', isOpen:false};
+        this.state = {user:props.user, name: '', isOpen:false};
         this.addPlayers = this.addPlayers.bind(this);
     }
 
@@ -16,7 +16,7 @@ class Home extends Component {
     render() {
         return (
             <div>
-                <Roster callback={this.addPlayers} league={this.props.league}/>
+                <Roster callback={this.addPlayers} league={this.props.league} user={this.state.user}/>
                 
             </div>
     );

@@ -7,12 +7,13 @@ class JoinLeague extends Component {
     
     constructor(props){
         super(props);
-        this.state = {leagues:[], myLeagues:{}, loading:true, userid:localStorage.getItem("uid"), name: localStorage.getItem("udisplayname")};
+        this.state = {leagues:[], myLeagues:{}, loading:true, userid:props.user.userid, name: props.user.name};
 
         this.getLeagues = this.getLeagues.bind(this);
         this.getMyLeagues = this.getMyLeagues.bind(this);
         this.join = this.join.bind(this);
         
+        console.log(props.user);
     }
 
     componentDidMount(){
@@ -26,6 +27,8 @@ class JoinLeague extends Component {
             leagueid: id,
             password:''
         }
+
+        console.log(data);
 
         axios.post('https://go-long-ff.herokuapp.com/v1/entry', queryString.stringify(data))
             .then((response) => {

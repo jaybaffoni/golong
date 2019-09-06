@@ -8,7 +8,7 @@ class PlayerSelect extends Component {
     
     constructor(props){
         super(props);
-        this.state = { userid: localStorage.getItem('uid'), players:[], page:0, modal:false, selectedPlayer:{}, shares: ''};
+        this.state = { userid: props.user.userid, players:[], page:0, modal:false, selectedPlayer:{}, shares: ''};
         this.getPlayers = this.getPlayers.bind(this);
         this.getRows = this.getRows.bind(this);
         this.prev = this.prev.bind(this);

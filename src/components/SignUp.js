@@ -30,7 +30,7 @@ class SignUp extends Component {
         return;
       }
       console.log('Signing up');
-      localStorage.setItem('udisplayname', this.state.displayname);
+      // localStorage.setItem('udisplayname', this.state.displayname);
       fire.auth().createUserWithEmailAndPassword(this.state.email, this.state.password)
       .then((u)=>{
         
