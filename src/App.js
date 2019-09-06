@@ -5,24 +5,69 @@ import Home from './components/Home';
 import Leagues from './components/Leagues';
 import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
 import { Navbar, NavbarBrand, NavbarToggler, Collapse, NavbarNav, NavItem, NavLink,
-         Dropdown, DropdownItem, DropdownMenu, DropdownToggle } from 'mdbreact';
+         Dropdown, DropdownMenu, DropdownToggle } from 'mdbreact';
 import fire from './Fire';
 import axios from 'axios';
 import queryString from 'qs'
+import JoinLeague from './components/JoinLeague';
+import HomeLeagueRow from './components/HomeLeagueRow';
+import PlayerSelect from './components/PlayerSelect';
 
 class App extends Component {
   constructor() {
     super();
     this.state = ({
-      user: localStorage.getItem('user'),
+      user: JSON.parse(localStorage.getItem('user')),
       collapse: false,
       isWideEnough: false,
-      loading: true
+      loading: true,
+      league: JSON.parse(localStorage.getItem('league')),
+      leagues:[]
     });
     this.onClick = this.onClick.bind(this);
     this.authListener = this.authListener.bind(this);
     this.setUserState = this.setUserState.bind(this);
     this.logout = this.logout.bind(this);
+    this.setLeague = this.setLeague.bind(this);
+    this.getLeagues = this.getLeagues.bind(this);
+
+    console.log('user:');
+    console.log(this.state.user);
+    console.log('league:');
+    console.log(this.state.league);
+  }
+
+  getLeagues(){
+
+    console.log(this.state.user);
+
+    var data = {
+        userid: this.state.user
+    }
+
+    axios.post('https://go-long-ff.herokuapp.com/v1/entries', queryString.stringify(data))
+        .then((response) => {
+            console.log(response);
+            this.setState({leagues:response.data});
+        })
+        .catch((error) => {
+            console.log(error);
+        }); 
+}
+
+  showLeagues(){
+    return this.state.leagues.map((object, i) => {
+      return(
+              <HomeLeagueRow key={i} obj={object} callback={this.setLeague}/>          
+          )
+      
+      })
+  }
+
+  setLeague(league){
+      console.log(league);
+      localStorage.setItem('league', JSON.stringify(league));
+      this.setState({league:league});
   }
 
   onClick(){
@@ -33,6 +78,7 @@ class App extends Component {
 
   componentDidMount() {
     this.authListener();
+    this.getLeagues();
   }
 
 authListener() {
@@ -49,11 +95,8 @@ authListener() {
               name: display
           }
 
-          console.log(data);
-
           axios.post('https://go-long-ff.herokuapp.com/v1/user', queryString.stringify(data))
             .then((response) => {
-                console.log(response);
                 this.setUserState(response.data);
 
             })
@@ -61,7 +104,6 @@ authListener() {
                 console.log(error);
             });        
       } else {
-        console.log('no user');
         localStorage.removeItem('user');
         localStorage.removeItem('uid');
         localStorage.removeItem('uemail');
@@ -72,7 +114,7 @@ authListener() {
   }
 
   setUserState(user){
-      localStorage.setItem('user', user);
+      localStorage.setItem('user', JSON.stringify(user));
       localStorage.setItem('uid', user.userid);
       localStorage.setItem('uemail', user.email);
       localStorage.setItem('udisplayname', user.name);
@@ -99,36 +141,33 @@ authListener() {
                 </NavbarBrand>
                 { !this.state.isWideEnough && <NavbarToggler onClick = { this.onClick } />}
                 <Collapse isOpen = { this.state.collapse } navbar>
-                    
                     <NavbarNav right>
-                      
-                      <NavbarNav right>
                         <NavItem>
-                            <NavLink to="/home">Home</NavLink>
-                        </NavItem>
-                        <NavItem>
-                            <NavLink to="/leagues">Leagues</NavLink>
+                            <NavLink to="/leagues">Home</NavLink>
                         </NavItem>
                         <NavItem>
                             <Dropdown>
                               <DropdownToggle nav caret>
-                                <span className="mr-2">{this.state.user.name}</span>
+                                <span className="mr-2">{!this.state.league ? 'Select League' : this.state.league.leaguename}</span>
                               </DropdownToggle>
                               <DropdownMenu>
-                                <DropdownItem onClick={this.logout}>Log Out</DropdownItem>
-                                <DropdownItem >Profile</DropdownItem>
+                                {this.showLeagues()}
                               </DropdownMenu>
                             </Dropdown>
                         </NavItem>
-                      </NavbarNav>
+                        {/* <NavItem>
+                            {this.state.cash && <NavLink to="/add">Cash: {this.state.cash}</NavLink>}
+                        </NavItem> */}
                     </NavbarNav>
                 </Collapse>
             </Navbar>
-            <div style={{paddingTop:"75px"}}>
+            <div style={{paddingTop:"75px", paddingRight:'10px', paddingLeft:'10px'}}>
                 <Switch>
-                    <PrivateRoute path="/home" component={Home}/>
-                    <PrivateRoute path="/leagues" component={Leagues}/>
-                    <Route path="*" render={() => <Redirect to="/home" />} />
+                    <PrivateRoute path="/leagues" component={Leagues} callback={this.setLeague}/>
+                    <PrivateRoute path="/home" component={Home} league={this.state.league}/>
+                    <PrivateRoute path="/add" component={PlayerSelect} league={this.state.league}/>
+                    <PrivateRoute path="/join" component={JoinLeague}/>
+                    <Route path="*" render={() => <Redirect to="/leagues" />} />
                 </Switch>
             </div>
           </div>}
@@ -140,20 +179,13 @@ authListener() {
 }
 
 const PrivateRoute = ({ component: Component, ...rest }) => (
-  <Route
-    {...rest}
-    render={props =>
-      localStorage.getItem('uid') ? (
-        <Component {...props} />
-      ) : (
-        <Redirect
-          to={{
-            pathname: "/signin"
-          }}
-        />
-      )
-    }
-  />
-);
+  <Route {...rest} render={(props) => (
+    localStorage.getItem('uid')
+      ? <Component {...props} {...rest}/>
+      : <Redirect to={{
+          pathname: '/signin'
+        }} />
+  )} />
+)
 
  export default App;

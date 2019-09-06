@@ -7,6 +7,11 @@ body {
   height: 100%;
 }
 
+/* .dropdown .dropdown-menu .dropdown-item:active, .dropdown .dropdown-menu .dropdown-item:hover{
+  background-color: #007bff !important;
+  color: white;
+} */
+
 .header-text{
   text-align:center;
   color:whitesmoke;
