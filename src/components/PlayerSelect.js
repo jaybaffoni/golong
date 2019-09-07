@@ -136,32 +136,24 @@ class PlayerSelect extends Component {
                     </MDBModal>
                 </MDBContainer>
                 {this.state.loading ? <Loader /> : (<div>
-                <table className="table table-dark table-hover table-condensed">
-                    <thead>
-                        <tr>
-                        <th scope="col">
-                            <div>
-                                <p style={{display:'inline-block', marginRight:'10px', marginBottom:'0px'}}>Name / Pos:</p>
-                                <select style={{display:'inline-block'}} onChange={this.clicked} value={this.state.position}>
-                                    <option value="">All</option>
-                                    <option value="QB">QB</option>
-                                    <option value="RB">RB</option>
-                                    <option value="WR">WR</option>
-                                    <option value="TE">TE</option>
-                                </select>
-                            </div>
-                        </th>
-                        <th scope="col"></th>
-                        <th scope="col" style={{textAlign:'right'}}>Price</th>
-                        </tr>
-                    </thead>
+                    <div style={{padding:'15px'}}>
+                        <p className="white-text" style={{marginRight:'10px', marginBottom:'0px', display:'inline-block'}}>Position: </p>
+                        <select style={{display:'inline-block'}} onChange={this.clicked} value={this.state.position}>
+                            <option value="">All</option>
+                            <option value="QB">QB</option>
+                            <option value="RB">RB</option>
+                            <option value="WR">WR</option>
+                            <option value="TE">TE</option>
+                        </select>
+                    </div>
+                <table style={{marginBottom:'0px'}} className="table table-dark table-hover table-condensed">
                     <tbody>
                         {this.getRows()}
                     </tbody>
                 </table>
                 <div>
-                    <Button display="inline-block" color="primary" onClick={this.prev} style={{float:"left"}}>Prev Page</Button> 
-                    <Button display="inline-block" color="primary" onClick={this.next} style={{float:"right"}}>Next Page</Button> 
+                    <Button size="sm" display="inline-block" color="primary" onClick={this.prev} style={{float:"left"}}>Prev</Button> 
+                    <Button size="sm" display="inline-block" color="primary" onClick={this.next} style={{float:"right"}}>Next</Button> 
                 </div></div>)}
             </div>
     );

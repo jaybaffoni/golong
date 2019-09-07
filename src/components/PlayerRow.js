@@ -17,7 +17,7 @@ class PlayerRow extends Component {
                 <td>
                     <div>
                         <p style={{margin:'0px'}}>{this.props.obj.lastname}, {this.props.obj.firstname}</p>
-                        <p style={{color:'#cccccc',fontSize:'12px',margin:'0px'}}>{this.props.obj.position} - {this.props.obj.team}</p>
+                        <p style={{color:'#cccccc',fontSize:'12px',margin:'0px'}}>{this.props.obj.position} {this.props.obj.team}</p>
                     </div>
                 </td>
                 <td>

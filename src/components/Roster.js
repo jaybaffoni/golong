@@ -139,13 +139,6 @@ class Roster extends Component {
                 </MDBContainer>
                 {this.state.loading ? <Loader /> : (
                 <table className="table table-dark table-hover table-condensed">
-                    <thead>
-                        <tr>
-                        <th scope="col">Name</th>
-                        <th scope="col"></th>
-                        <th scope="col" style={{textAlign:'right'}}>Shares</th>
-                        </tr>
-                    </thead>
                     <tbody>
                         {this.getRows()}
                     </tbody>

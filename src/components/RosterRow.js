@@ -17,7 +17,7 @@ class RosterRow extends Component {
                 <td>
                     <div>
                         <p style={{margin:'0px'}}>{this.props.obj.lastname}, {this.props.obj.firstname}</p>
-                        <p style={{color:'#cccccc',fontSize:'12px',margin:'0px'}}>{this.props.obj.position} - {this.props.obj.team}</p>
+                        <p style={{color:'#cccccc',fontSize:'12px',margin:'0px'}}>{this.props.obj.position} {this.props.obj.team}</p>
                     </div>
                 </td>
                 <td style={{textAlign:"right"}}>
@@ -28,8 +28,8 @@ class RosterRow extends Component {
                 </td>
                 <td style={{textAlign:"right"}}>
                     <div>
-                        <p style={{margin:'0px'}}>{this.props.obj.shares}</p>
-                        <p style={{color:'#cccccc',fontSize:'12px',margin:'0px'}}>${this.props.obj.totalvalue / 100}</p>
+                        <p style={{margin:'0px'}}>${this.props.obj.totalvalue / 100}</p>
+                        <p style={{color:'#cccccc',fontSize:'12px',margin:'0px'}}>{this.props.obj.shares} share{this.props.obj.shares !== 1 && 's'}</p>
                     </div>
                 </td>
             </tr>
