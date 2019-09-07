@@ -70,8 +70,7 @@ class App extends Component {
 
   setLeague(league){
       console.log(league);
-      // localStorage.setItem('league', JSON.stringify(league));
-      this.setState({league:league});
+      this.setState({league:league, collapse:false});
   }
 
   onClick(){
@@ -88,7 +87,6 @@ class App extends Component {
 authListener() {
     fire.auth().onAuthStateChanged((user) => {
       if (user) {
-          //create or update user in db
           var display = user.displayName;
           if(!display){
             display = '';
@@ -108,20 +106,12 @@ authListener() {
                 console.log(error);
             });        
       } else {
-        // localStorage.removeItem('user');
-        // localStorage.removeItem('uid');
-        // localStorage.removeItem('uemail');
-        // localStorage.removeItem('udisplayname');
         this.setState({user:null})
       }
     });
   }
 
   setUserState(user){
-      // localStorage.setItem('user', JSON.stringify(user));
-      // localStorage.setItem('uid', user.userid);
-      // localStorage.setItem('uemail', user.email);
-      // localStorage.setItem('udisplayname', user.name);
       if(user.name === ''){
           user.name = user.email;
       }
@@ -134,6 +124,7 @@ authListener() {
 
   createClicked(){
     this.setState({modal:true});
+    this.closeMenu();
 }
 
 confirmCreate(){
@@ -171,6 +162,11 @@ toggle = () => {
     this.setState({ [e.target.name]: e.target.value });
   }
 
+  closeMenu = () => {
+    console.log('trying to close');
+    this.setState({collapse:false});
+  }
+
   render() {
     return (
       <div>
@@ -186,7 +182,7 @@ toggle = () => {
                 <Collapse isOpen = { this.state.collapse } navbar>
                     <NavbarNav right>
                         <NavItem>
-                            <NavLink to="/leagues">Dashboard</NavLink>
+                            <NavLink onClick={this.closeMenu} to="/leagues">Dashboard</NavLink>
                         </NavItem>
                         <NavItem>
                             <Dropdown>
@@ -196,7 +192,7 @@ toggle = () => {
                               <DropdownMenu>
                                 {this.showLeagues()}
                                 <DropdownItem>
-                                    <NavLink style={{color:'black'}} to="/join">Join League</NavLink>
+                                    <NavLink onClick={this.closeMenu} style={{color:'black'}} to="/join">Join League</NavLink>
                                 </DropdownItem>
                                 <DropdownItem>
                                     <NavLink onClick={this.createClicked} style={{color:'black'}} to="#">Create League</NavLink>
@@ -205,13 +201,13 @@ toggle = () => {
                             </Dropdown>
                         </NavItem>
                         <NavItem>
-                            <NavLink to="/home">Portfolio</NavLink>
+                            <NavLink onClick={this.closeMenu} to="/home">Portfolio</NavLink>
                         </NavItem>
                         <NavItem>
-                            <NavLink to="/add">Players</NavLink>
+                            <NavLink onClick={this.closeMenu} to="/add">Players</NavLink>
                         </NavItem>
                         <NavItem>
-                            <NavLink to="/">Standings</NavLink>
+                            <NavLink onClick={this.closeMenu} to="/">Standings</NavLink>
                         </NavItem>
                         {/* <NavItem>
                             {this.state.cash && <NavLink to="/add">Cash: {this.state.cash}</NavLink>}

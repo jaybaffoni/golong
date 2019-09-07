@@ -19,7 +19,6 @@ class Roster extends Component {
     }
 
     static getDerivedStateFromProps(props, state) {
-        console.log('derived state from props')
         if (props.league.leagueid !== state.league.leagueid) {
           return {
             league:props.league,
