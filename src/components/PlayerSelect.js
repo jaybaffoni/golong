@@ -139,7 +139,18 @@ class PlayerSelect extends Component {
                 <table className="table table-dark table-hover table-condensed">
                     <thead>
                         <tr>
-                        <th scope="col">Name</th>
+                        <th scope="col">
+                            <div>
+                                <p style={{display:'inline-block', marginRight:'10px', marginBottom:'0px'}}>Name / Pos:</p>
+                                <select style={{display:'inline-block'}} onChange={this.clicked} value={this.state.position}>
+                                    <option value="">All</option>
+                                    <option value="QB">QB</option>
+                                    <option value="RB">RB</option>
+                                    <option value="WR">WR</option>
+                                    <option value="TE">TE</option>
+                                </select>
+                            </div>
+                        </th>
                         <th scope="col"></th>
                         <th scope="col" style={{textAlign:'right'}}>Price</th>
                         </tr>
