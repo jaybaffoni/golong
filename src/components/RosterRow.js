@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { Button } from 'mdbreact';
 
 class RosterRow extends Component {
     
@@ -14,13 +13,12 @@ class RosterRow extends Component {
     
     render() {
         return (
-            <tr>
+            <tr className='table-row' onClick={this.sell}>
                 <td>{this.props.obj.lastname}, {this.props.obj.firstname}</td>
                 <td style={{textAlign:"right"}}>{this.props.obj.position}</td>
                 <td style={{textAlign:"right"}}>{this.props.obj.team}</td>
                 <td style={{textAlign:"right"}}>{this.props.obj.shares}</td>
                 <td style={{textAlign:'right'}}>${this.props.obj.totalvalue / 100}</td>
-                <td><Button size="sm" color="danger" style={{float:'right'}} onClick={this.sell}>Sell</Button></td>
             </tr>
     );
   }

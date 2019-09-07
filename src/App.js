@@ -186,6 +186,9 @@ toggle = () => {
                 <Collapse isOpen = { this.state.collapse } navbar>
                     <NavbarNav right>
                         <NavItem>
+                            <NavLink to="/leagues">Dashboard</NavLink>
+                        </NavItem>
+                        <NavItem>
                             <Dropdown>
                               <DropdownToggle nav caret>
                                 <span className="mr-2">{!this.state.league ? 'Select League' : this.state.league.leaguename}</span>
@@ -202,7 +205,10 @@ toggle = () => {
                             </Dropdown>
                         </NavItem>
                         <NavItem>
-                            <NavLink to="/leagues">Dashboard</NavLink>
+                            <NavLink to="/home">Portfolio</NavLink>
+                        </NavItem>
+                        <NavItem>
+                            <NavLink to="/add">Players</NavLink>
                         </NavItem>
                         <NavItem>
                             <NavLink to="/">Standings</NavLink>
@@ -227,11 +233,11 @@ toggle = () => {
                 </MDBModalFooter>
                 </MDBModal>
             </MDBContainer>
-            <div style={{paddingTop:"75px", paddingRight:'10px', paddingLeft:'10px'}}>
+            <div style={{paddingTop:"50px"}}>
                 <Switch>
                     <PrivateRoute path="/leagues" component={Leagues} user={this.state.user} callback={this.setLeague} league={this.state.league} getLeagues={this.getLeagues}/>
-                    <PrivateRoute path="/home" component={Home} league={this.state.league} user={this.state.user}/>
-                    <PrivateRoute path="/add" component={PlayerSelect} user={this.state.user} league={this.state.league}/>
+                    <LeagueRoute path="/home" component={Home} object={this.state.league} league={this.state.league} user={this.state.user}/>
+                    <LeagueRoute path="/add" component={PlayerSelect}  object={this.state.league} user={this.state.user} league={this.state.league}/>
                     <PrivateRoute path="/join" component={JoinLeague} user={this.state.user} league={this.state.league} callback={this.getLeagues} setLeague={this.setLeague}/>
                     <Route path="*" render={() => <Redirect to="/leagues" />} />
                 </Switch>
@@ -251,6 +257,18 @@ const PrivateRoute = ({ component: Component, ...rest }) => (
       ? <Component {...props} {...rest}/>
       : <Redirect to={{
           pathname: '/signin'
+        }} />
+  )} />
+)
+
+const LeagueRoute = ({ component: Component, object: League, ...rest }) => (
+  
+  <Route {...rest} render={(props) => (
+    
+    (fire.auth().currentUser && League)
+      ? <Component {...props} {...rest}/>
+      : <Redirect to={{
+          pathname: '/leagues'
         }} />
   )} />
 )

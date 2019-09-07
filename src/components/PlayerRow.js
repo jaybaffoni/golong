@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { Button } from 'mdbreact';
 
 class PlayerRow extends Component {
     
@@ -14,12 +13,11 @@ class PlayerRow extends Component {
     
     render() {
         return (
-            <tr>
+            <tr className='table-row' onClick={this.buy}>
                 <td>{this.props.obj.lastname}, {this.props.obj.firstname}</td>
                 <td style={{textAlign:"right"}}>{this.props.obj.position}</td>
                 <td style={{textAlign:"right"}}>{this.props.obj.team}</td>
                 <td style={{textAlign:'right'}}>${this.props.obj.price}</td>
-                <td><Button size="sm" color="primary" style={{float:'right'}} onClick={this.buy}>Buy</Button></td>
             </tr>
     );
   }

@@ -17,7 +17,11 @@ body {
   color:whitesmoke;
 }
 
-table td{
+.table-row{
+  cursor:pointer;
+}
+
+/* table td{
   color: white;
   font-size: 20px;
 }
@@ -29,7 +33,7 @@ table th{
 
 tr:nth-child(even) {
   background-color: #555555;
-}
+} */
 
 .dark-table td{
   color: black !important;

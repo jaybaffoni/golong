@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Input, MDBContainer, MDBBtn, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter } from 'mdbreact';
+import { Input, MDBContainer, MDBBtn, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter } from 'mdbreact';
 import axios from 'axios';
 import queryString from 'qs';
 import RosterRow from './RosterRow';
@@ -19,6 +19,7 @@ class Roster extends Component {
     }
 
     static getDerivedStateFromProps(props, state) {
+        console.log('derived state from props')
         if (props.league.leagueid !== state.league.leagueid) {
           return {
             league:props.league,
@@ -133,21 +134,17 @@ class Roster extends Component {
                     </MDBModalFooter>
                     </MDBModal>
                 </MDBContainer>
-                <div>
-                    <h3  style={{display:'inline-block'}}className="white-text">Cash: ${this.state.cash}</h3>
-                    <Button  style={{display:'inline-block', float:'right'}}color="primary" size="sm" onClick={this.addPlayers}>Add Players</Button>
-                </div>
-                
-                <table style={{width:"100%"}}>
-                    <tbody>
+                <table className="table table-dark table-striped table-hover table-condensed">
+                    <thead>
                         <tr>
-                            <th>Name</th>
-                            <th style={{textAlign:"right"}}>Position</th> 
-                            <th style={{textAlign:"right"}}>Team</th>
-                            <th style={{textAlign:"right"}}>Shares</th>
-                            <th style={{textAlign:"right"}}>Value</th>
-                            <th></th>
+                        <th scope="col">Name</th>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
+                        <th scope="col" style={{textAlign:'right'}}>Shares</th>
+                        <th scope="col" style={{textAlign:'right'}}>Value</th>
                         </tr>
+                    </thead>
+                    <tbody>
                         {this.getRows()}
                     </tbody>
                 </table>

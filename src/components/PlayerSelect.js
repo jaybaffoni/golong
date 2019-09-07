@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Input, MDBContainer, MDBBtn, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter,
-         MDBDropdown, MDBDropdownToggle, MDBDropdownMenu, MDBDropdownItem } from 'mdbreact';
+import { Button, Input, MDBContainer, MDBBtn, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter } from 'mdbreact';
 import axios from 'axios';
 import PlayerRow from './PlayerRow';
 import queryString from 'qs';
@@ -11,7 +10,6 @@ class PlayerSelect extends Component {
         super(props);
         if(!props.league){
             props.history.push('leagues');
-            return;
         }
         this.state = { userid: props.user.userid, players:[], page:0, modal:false, selectedPlayer:{}, shares: '', position:'All'};
         this.getPlayers = this.getPlayers.bind(this);
@@ -21,7 +19,6 @@ class PlayerSelect extends Component {
         this.buy = this.buy.bind(this);
         this.confirmBuy = this.confirmBuy.bind(this);
         this.handleChange = this.handleChange.bind(this);
-        this.back = this.back.bind(this);
         this.clicked = this.clicked.bind(this);
 
         this.getPlayers(0, '');
@@ -32,7 +29,7 @@ class PlayerSelect extends Component {
         console.log(page);
         if(this.state.page > 0){
             page = page - 1;
-            this.getPlayers(page);
+            this.getPlayers(page, this.state.position);
             this.setState({page:page});
         }
     }
@@ -41,7 +38,7 @@ class PlayerSelect extends Component {
         var page = this.state.page;
         console.log(page);
         page = page + 1;
-        this.getPlayers(page);
+        this.getPlayers(page, this.state.position);
         this.setState({page:page});
     }
 
@@ -50,12 +47,14 @@ class PlayerSelect extends Component {
     }
 
     getPlayers(page, pos){
+        if(pos === 'All') pos = '';
         console.log(pos);                 
         var url = 'https://go-long-ff.herokuapp.com/v1/players/' + page + '/' + pos;
         console.log(url);
         axios.get(url)
           .then((response) => {
                 this.setState({players: response.data});
+                window.scrollTo(0, 0)
             })
           .catch((error) => {
             console.log(error);
@@ -110,10 +109,6 @@ class PlayerSelect extends Component {
         this.setState({ [e.target.name]: e.target.value });
       }
 
-    back(){
-        this.props.history.push('/home');
-    }
-
     clicked(e){
         console.log(e.target.name);
         var pos = e.target.name;
@@ -139,36 +134,22 @@ class PlayerSelect extends Component {
                     </MDBModalFooter>
                     </MDBModal>
                 </MDBContainer>
-                <div>
-                    <h3  style={{display:'inline-block'}}className="white-text">Cash: ${this.state.cash}</h3>
-                    <Button  style={{display:'inline-block', float:'right'}}color="primary" size="sm" onClick={this.back}>Portfolio</Button>
-                </div>
-                <table style={{width:"100%"}}>
-                    <tbody>
+                <table className="table table-dark table-striped table-hover table-condensed">
+                    <thead>
                         <tr>
-                            <th>Name</th>
-                            <th><MDBDropdown>
-                                <MDBDropdownToggle caret color="danger">
-                                    {this.state.position}
-                                </MDBDropdownToggle>
-                                <MDBDropdownMenu basic>
-                                    <MDBDropdownItem name="All" onClick={this.clicked}>All</MDBDropdownItem>
-                                    <MDBDropdownItem name="QB" onClick={this.clicked}>QB</MDBDropdownItem>
-                                    <MDBDropdownItem name="RB" onClick={this.clicked}>RB</MDBDropdownItem>
-                                    <MDBDropdownItem name="WR" onClick={this.clicked}>WR</MDBDropdownItem>
-                                    <MDBDropdownItem name="TE" onClick={this.clicked}>TE</MDBDropdownItem>
-                                </MDBDropdownMenu>
-                            </MDBDropdown></th> 
-                            <th style={{textAlign:"right"}}>Team</th>
-                            <th style={{textAlign:"right"}}>Price</th>
-                            <th></th>
+                        <th scope="col">Name</th>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
+                        <th scope="col" style={{textAlign:'right'}}>Price</th>
                         </tr>
+                    </thead>
+                    <tbody>
                         {this.getRows()}
                     </tbody>
                 </table>
-                <div display="inline-block">
-                    <Button color="primary" onClick={this.next} style={{float:"right"}}>Next Page</Button> 
-                    <Button color="primary" onClick={this.prev} style={{float:"right"}}>Prev Page</Button> 
+                <div>
+                    <Button display="inline-block" color="primary" onClick={this.prev} style={{float:"left"}}>Prev Page</Button> 
+                    <Button display="inline-block" color="primary" onClick={this.next} style={{float:"right"}}>Next Page</Button> 
                 </div>
             </div>
     );
