@@ -3,6 +3,7 @@ import { Button, Input, MDBContainer, MDBBtn, MDBModal, MDBModalBody, MDBModalHe
 import axios from 'axios';
 import PlayerRow from './PlayerRow';
 import queryString from 'qs';
+import Loader from './Loader';
 
 class PlayerSelect extends Component {
     
@@ -11,7 +12,7 @@ class PlayerSelect extends Component {
         if(!props.league){
             props.history.push('leagues');
         }
-        this.state = { userid: props.user.userid, players:[], page:0, modal:false, selectedPlayer:{}, shares: '', position:'All'};
+        this.state = { loading:true, userid: props.user.userid, players:[], page:0, modal:false, selectedPlayer:{}, shares: '', position:'All'};
         this.getPlayers = this.getPlayers.bind(this);
         this.getRows = this.getRows.bind(this);
         this.prev = this.prev.bind(this);
@@ -20,7 +21,9 @@ class PlayerSelect extends Component {
         this.confirmBuy = this.confirmBuy.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.clicked = this.clicked.bind(this);
+    }
 
+    componentDidMount(){
         this.getPlayers(0, '');
     }
 
@@ -47,14 +50,18 @@ class PlayerSelect extends Component {
     }
 
     getPlayers(page, pos){
+        this.setState({loading:true});
         if(pos === 'All') pos = '';
         console.log(pos);                 
         var url = 'https://go-long-ff.herokuapp.com/v1/players/' + page + '/' + pos;
         console.log(url);
         axios.get(url)
           .then((response) => {
-                this.setState({players: response.data});
-                window.scrollTo(0, 0)
+                setTimeout(function () {
+                    this.setState({loading:false, players: response.data});
+                    window.scrollTo(0, 0)
+                }.bind(this), 500);  
+                
             })
           .catch((error) => {
             console.log(error);
@@ -134,6 +141,7 @@ class PlayerSelect extends Component {
                     </MDBModalFooter>
                     </MDBModal>
                 </MDBContainer>
+                {this.state.loading ? <Loader /> : (<div>
                 <table className="table table-dark table-striped table-hover table-condensed">
                     <thead>
                         <tr>
@@ -150,7 +158,7 @@ class PlayerSelect extends Component {
                 <div>
                     <Button display="inline-block" color="primary" onClick={this.prev} style={{float:"left"}}>Prev Page</Button> 
                     <Button display="inline-block" color="primary" onClick={this.next} style={{float:"right"}}>Next Page</Button> 
-                </div>
+                </div></div>)}
             </div>
     );
   }

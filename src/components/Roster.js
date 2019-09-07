@@ -3,6 +3,7 @@ import { Input, MDBContainer, MDBBtn, MDBModal, MDBModalBody, MDBModalHeader, MD
 import axios from 'axios';
 import queryString from 'qs';
 import RosterRow from './RosterRow';
+import Loader from './Loader';
 
 class Roster extends Component {
     
@@ -11,7 +12,7 @@ class Roster extends Component {
         if(!props.league){
             props.selectLeague();
         }
-        this.state = {update:false, league:props.league, cash:null, players: [], userid: props.user.userid, selectedPlayer:{}, shares:''};
+        this.state = {loading:true, update:false, league:props.league, cash:null, players: [], userid: props.user.userid, selectedPlayer:{}, shares:''};
         this.addPlayers = this.addPlayers.bind(this);
         this.sell = this.sell.bind(this);
         this.confirmSell = this.confirmSell.bind(this);
@@ -69,7 +70,8 @@ class Roster extends Component {
         this.props.callback();
     }
 
-    getRoster(){                    
+    getRoster(){                   
+        this.setState({loading:true}); 
         var data = {
             userid: this.state.userid,
             entryid: this.state.league.entryid
@@ -86,7 +88,9 @@ class Roster extends Component {
                         cash = response.data[0].cash / 100;
                     }
                 }
-                this.setState({update:false, cash:cash, players:newPlayers});
+                setTimeout(function () {
+                    this.setState({loading:false, update:false, cash:cash, players:newPlayers});
+                }.bind(this), 500);     
 
             })
             .catch((error) => {
@@ -133,6 +137,7 @@ class Roster extends Component {
                     </MDBModalFooter>
                     </MDBModal>
                 </MDBContainer>
+                {this.state.loading ? <Loader /> : (
                 <table className="table table-dark table-striped table-hover table-condensed">
                     <thead>
                         <tr>
@@ -146,7 +151,7 @@ class Roster extends Component {
                     <tbody>
                         {this.getRows()}
                     </tbody>
-                </table>
+                </table>)}
             </div>
     );
   }
