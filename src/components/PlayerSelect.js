@@ -12,7 +12,7 @@ class PlayerSelect extends Component {
         if(!props.league){
             props.history.push('leagues');
         }
-        this.state = { loading:true, userid: props.user.userid, players:[], page:0, modal:false, selectedPlayer:{}, shares: '', position:'All'};
+        this.state = { loading:true, userid: props.user.userid, players:[], page:0, modal:false, selectedPlayer:{}, shares: '', position:''};
         this.getPlayers = this.getPlayers.bind(this);
         this.getRows = this.getRows.bind(this);
         this.prev = this.prev.bind(this);
@@ -50,11 +50,8 @@ class PlayerSelect extends Component {
     }
 
     getPlayers(page, pos){
-        this.setState({loading:true});
-        if(pos === 'All') pos = '';
-        console.log(pos);                 
+        this.setState({loading:true});  
         var url = 'https://go-long-ff.herokuapp.com/v1/players/' + page + '/' + pos;
-        console.log(url);
         axios.get(url)
           .then((response) => {
                 setTimeout(function () {
@@ -94,8 +91,6 @@ class PlayerSelect extends Component {
             shares: this.state.shares
         }
 
-        console.log(data);
-
         axios.post('https://go-long-ff.herokuapp.com/v1/share/buy', queryString.stringify(data))
             .then((response) => {
                 this.setState({shares:''});
@@ -117,8 +112,7 @@ class PlayerSelect extends Component {
       }
 
     clicked(e){
-        console.log(e.target.name);
-        var pos = e.target.name;
+        var pos = e.target.value;
         this.setState({position:pos, page:0});
         if(pos === 'All') pos = '';
         this.getPlayers(0, pos);
@@ -146,7 +140,15 @@ class PlayerSelect extends Component {
                     <thead>
                         <tr>
                         <th scope="col">Name</th>
-                        <th scope="col"></th>
+                        <th scope="col" style={{textAlign:'right'}}>
+                            <select onChange={this.clicked} value={this.state.position}>
+                                <option value="">All</option>
+                                <option value="QB">QB</option>
+                                <option value="RB">RB</option>
+                                <option value="WR">WR</option>
+                                <option value="TE">TE</option>
+                            </select>
+                        </th>
                         <th scope="col"></th>
                         <th scope="col" style={{textAlign:'right'}}>Price</th>
                         </tr>

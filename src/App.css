@@ -12,6 +12,11 @@ body {
   color: white;
 } */
 
+select{
+  background-color: #282c34;
+  color:white;
+}
+
 .centered {
   position: fixed;
   top: 50%;
