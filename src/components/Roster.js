@@ -79,6 +79,7 @@ class Roster extends Component {
 
         axios.post('https://go-long-ff.herokuapp.com/v1/shares', queryString.stringify(data))
             .then((response) => {
+                console.log(response);
                 var cash = null;
                 var newPlayers = [];
                 for(var i = 0; i < response.data.length; i++){

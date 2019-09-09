@@ -13,6 +13,7 @@ import queryString from 'qs'
 import JoinLeague from './components/JoinLeague';
 import HomeLeagueRow from './components/HomeLeagueRow';
 import PlayerSelect from './components/PlayerSelect';
+import Standings from './components/Standings';
 
 class App extends Component {
   constructor() {
@@ -207,7 +208,7 @@ toggle = () => {
                             <NavLink onClick={this.closeMenu} to="/add">Players</NavLink>
                         </NavItem>
                         <NavItem>
-                            <NavLink onClick={this.closeMenu} to="/">Standings</NavLink>
+                            <NavLink onClick={this.closeMenu} to="/standings">Standings</NavLink>
                         </NavItem>
                         {/* <NavItem>
                             {this.state.cash && <NavLink to="/add">Cash: {this.state.cash}</NavLink>}
@@ -234,6 +235,7 @@ toggle = () => {
                     <PrivateRoute path="/leagues" component={Leagues} user={this.state.user} callback={this.setLeague} league={this.state.league} getLeagues={this.getLeagues}/>
                     <LeagueRoute path="/home" component={Home} object={this.state.league} league={this.state.league} user={this.state.user}/>
                     <LeagueRoute path="/add" component={PlayerSelect}  object={this.state.league} user={this.state.user} league={this.state.league}/>
+                    <LeagueRoute path="/standings" component={Standings}  object={this.state.league} user={this.state.user} league={this.state.league}/>
                     <PrivateRoute path="/join" component={JoinLeague} user={this.state.user} league={this.state.league} callback={this.getLeagues} setLeague={this.setLeague}/>
                     <Route path="*" render={() => <Redirect to="/leagues" />} />
                 </Switch>
