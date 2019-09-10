@@ -18,9 +18,11 @@ class Leagues extends Component {
         this.confirmCreate = this.confirmCreate.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.leave = this.leave.bind(this);
-
-        this.getLeagues();
         
+    }
+
+    componentDidMount(){
+        this.getLeagues();
     }
 
     setLeague(e){

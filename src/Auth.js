@@ -22,7 +22,7 @@ class Auth extends Component {
                 {this.state.signin ?
                     <SignIn switch={this.switchView}/>
                 :
-                    <SignUp switch={this.switchView}/>
+                    <SignUp switch={this.switchView} setDisplayName={this.props.setDisplayName}/>
                 }
                 </div>
 

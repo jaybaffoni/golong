@@ -18,10 +18,10 @@ class PlayerRow extends Component {
     
     render() {
         return (
-            <tr className='table-row' onClick={this.buy}>
+            <tr className='table-row' onClick={this.buy}> 
                 <td>
                     <div>
-                        <p style={{margin:'0px'}}>{this.props.obj.lastname}, {this.props.obj.firstname}</p>
+                        <p style={{margin:'0px'}}>{this.props.obj.firstname} {this.props.obj.lastname}</p>
                         <p style={{color:'#cccccc',fontSize:'12px',margin:'0px'}}>{this.props.obj.position} {this.props.obj.team}</p>
                     </div>
                 </td>
@@ -33,7 +33,7 @@ class PlayerRow extends Component {
                 </td>
                 <td style={{textAlign:"right"}}>
                     <div>
-                        <p style={{margin:'0px'}}>{this.props.obj.price}</p>
+                        <p style={{margin:'0px'}}>${this.props.obj.price}</p>
                         {this.props.obj.gameHasBegun ? <p style={{color:'#dd5555',fontSize:'12px',margin:'0px'}}>LOCKED</p> : <p style={{color:'#55dd55',fontSize:'12px',margin:'0px'}}>AVAILABLE</p>}
                     </div>
                 </td>

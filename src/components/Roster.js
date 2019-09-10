@@ -4,6 +4,8 @@ import axios from 'axios';
 import queryString from 'qs';
 import RosterRow from './RosterRow';
 import Loader from './Loader';
+import { VictoryLine, VictoryChart, VictoryAxis, VictoryTheme } from 'victory';
+var { DateTime } = require('luxon');
 
 class Roster extends Component {
     
@@ -12,11 +14,12 @@ class Roster extends Component {
         if(!props.league){
             props.selectLeague();
         }
-        this.state = {loading:true, update:false, league:props.league, cash:null, players: [], userid: props.user.userid, selectedPlayer:{}, shares:''};
+        this.state = {loading:true, update:false, league:props.league, cash:null, players: [], userid: props.user.userid, selectedPlayer:{}, playerData:[], tickValues:[], shares:''};
         this.addPlayers = this.addPlayers.bind(this);
         this.sell = this.sell.bind(this);
         this.confirmSell = this.confirmSell.bind(this);
         this.handleChange = this.handleChange.bind(this);
+        this.getPlayerData = this.getPlayerData.bind(this);
     }
 
     static getDerivedStateFromProps(props, state) {
@@ -30,6 +33,7 @@ class Roster extends Component {
       }
 
     sell(obj){
+        this.getPlayerData(obj.playerid);
         this.setState({selectedPlayer:obj, modal:true});
     }
 
@@ -98,6 +102,27 @@ class Roster extends Component {
                 console.log(error);
             }); 
     }
+
+    getPlayerData(id){
+        console.log(id);
+        var url = 'https://go-long-ff.herokuapp.com/v1/player/' + id;
+        axios.get(url)
+          .then((response) => {
+                var newData = [];
+                var newTicks = [];
+                for(var i = 0; i < response.data.length; i++){
+                    var datum = response.data[i];
+                    var newDatum = {week: i+1, score: parseFloat(datum.score)};
+                    newData.push(newDatum);
+                    var newTick = datum.week;
+                    newTicks.push("Week " + newTick);
+                }
+                this.setState({playerData:newData, tickValues:newTicks});
+            })
+          .catch((error) => {
+            console.log(error);
+          });
+    }
     
     getRows(){
         return this.state.players.map((object, i) => {
@@ -122,13 +147,36 @@ class Roster extends Component {
         if(this.state.update){
             this.getRoster();
         }
+        var d = DateTime.fromISO(this.state.selectedPlayer.gametime).toFormat("EEE h':'mm");
         return (
             <div >
                 <MDBContainer>
                     <MDBModal isOpen={this.state.modal} toggle={this.toggle}    >
-                    <MDBModalHeader toggle={this.toggle}>{this.state.selectedPlayer.firstname} {this.state.selectedPlayer.lastname}</MDBModalHeader>
+                    <MDBModalHeader toggle={this.toggle}>
+                        {this.state.selectedPlayer.firstname} {this.state.selectedPlayer.lastname} - {this.state.selectedPlayer.position} {this.state.selectedPlayer.team}
+                    </MDBModalHeader>
                     <MDBModalBody>
+                        <h5>{d} {this.state.selectedPlayer.team === this.state.selectedPlayer.hometeam ? ('vs ' + this.state.selectedPlayer.awayteam) : ('@ ' + this.state.selectedPlayer.hometeam)}</h5>
                         <h5>Current Shares: {this.state.selectedPlayer.shares}</h5>
+                        <VictoryChart theme={VictoryTheme.material} minDomain={{ y: 0 }}>
+                            <VictoryAxis
+                            // tickValues specifies both the number of ticks and where
+                            // they are placed on the axis
+                            tickValues={this.state.tickValues}
+                            />
+                            <VictoryAxis
+                            dependentAxis
+                            // tickFormat specifies how ticks should be displayed
+                            tickFormat={(x) => (`$${x}`)}
+                            />
+                            <VictoryLine
+                                data={this.state.playerData}
+                                // data accessor for x values
+                                x="week"
+                                // data accessor for y values
+                                y="score"
+                            />
+                        </VictoryChart>
                         <Input label="Number of shares" group name="shares" onChange={this.handleChange} validate value={this.state.shares}/>
                         <h5>Shares Left: {this.state.selectedPlayer.shares - this.state.shares}</h5>
                     </MDBModalBody>

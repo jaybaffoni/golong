@@ -20,7 +20,7 @@ class RosterRow extends Component {
             <tr className='table-row' onClick={this.sell}>
                 <td>
                     <div>
-                        <p style={{margin:'0px'}}>{this.props.obj.lastname}, {this.props.obj.firstname}</p>
+                        <p style={{margin:'0px'}}>{this.props.obj.firstname} {this.props.obj.lastname}</p>
                         <p style={{color:'#cccccc',fontSize:'12px',margin:'0px'}}>{this.props.obj.position} {this.props.obj.team}</p>
                     </div>
                 </td>

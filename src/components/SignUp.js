@@ -30,7 +30,7 @@ class SignUp extends Component {
         return;
       }
       console.log('Signing up');
-      // localStorage.setItem('udisplayname', this.state.displayname);
+      this.props.setDisplayName(this.state.displayname);
       fire.auth().createUserWithEmailAndPassword(this.state.email, this.state.password)
       .then((u)=>{
         
@@ -66,6 +66,7 @@ class SignUp extends Component {
                 <form>
                   <div className="grey-text">
                     <Input label="Enter your email" group type="email" name="email" onChange={this.handleChange} validate error="wrong" success="right" value={this.state.email}/>
+                    <Input label="Choose a display name" group name="displayname" onChange={this.handleChange} validate error="wrong" success="right" value={this.state.displayname}/>
                     <Input label="Enter a password" group type="password" name="password" onChange={this.handleChange} validate value={this.state.password}/>
                     <Input label="Confirm your password" group type="password" name="confirm" onChange={this.handleChange} validate value={this.state.confirm}/>
                   </div>

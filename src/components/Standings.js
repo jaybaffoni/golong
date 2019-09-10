@@ -43,7 +43,12 @@ class Standings extends Component {
     getRows(){
         return this.state.users.map((object, i) => {
             return(
-                    <PlayerRow key={i} obj={object} callback={this.buy}/>
+                    // <PlayerRow key={i} obj={object} callback={this.buy}/>
+                    <tr key={i}>
+                        <td>{object.displayname}</td>
+                        <td>{object.cash}</td>
+                        <td>{object.sharevalue}</td>
+                    </tr>
                 )
             
         })
@@ -53,19 +58,18 @@ class Standings extends Component {
         return (
             <div>
                 {this.state.loading ? <Loader /> : (<div>
-                    <div style={{padding:'15px'}}>
-                        <p className="white-text" style={{marginRight:'10px', marginBottom:'0px', display:'inline-block'}}>Position: </p>
-                        <select style={{display:'inline-block'}} onChange={this.clicked} value={this.state.position}>
-                            <option value="">All</option>
-                            <option value="QB">QB</option>
-                            <option value="RB">RB</option>
-                            <option value="WR">WR</option>
-                            <option value="TE">TE</option>
-                        </select>
-                    </div>
+                    
                 <table style={{marginBottom:'0px'}} className="table table-dark table-hover table-condensed">
+                    <thead>
+                        <tr>
+                            <td>Name</td>
+                            <td>Cash</td>
+                            <td>Share Value</td>
+                        </tr>
+                        
+                    </thead>
                     <tbody>
-                        {/* {this.getRows()} */}
+                        {this.getRows()}
                     </tbody>
                 </table>
                 <div>

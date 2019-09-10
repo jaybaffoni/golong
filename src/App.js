@@ -19,6 +19,7 @@ class App extends Component {
   constructor() {
     super();
     this.state = ({
+      waiting:true,
       collapse: false,
       isWideEnough: false,
       loading: true,
@@ -28,6 +29,7 @@ class App extends Component {
       newLeagueName:'',
       newLeaguePassword:'',
       newLeagueConfirm:'',
+      displayName:'',
       user: fire.auth().currentUser
     });
     this.onClick = this.onClick.bind(this);
@@ -39,6 +41,7 @@ class App extends Component {
     this.createClicked = this.createClicked.bind(this);
     this.confirmCreate = this.confirmCreate.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.setDisplayName = this.setDisplayName.bind(this);
 
     console.log(fire.auth().currentUser);
 
@@ -87,10 +90,11 @@ class App extends Component {
 
 authListener() {
     fire.auth().onAuthStateChanged((user) => {
+     
       if (user) {
           var display = user.displayName;
           if(!display){
-            display = '';
+            display = this.state.displayName;
           }
           var data = {
               userid: user.uid,
@@ -101,13 +105,13 @@ authListener() {
           axios.post('https://go-long-ff.herokuapp.com/v1/user', queryString.stringify(data))
             .then((response) => {
                 this.setUserState(response.data);
-
+                this.setState({waiting:false});
             })
             .catch((error) => {
                 console.log(error);
             });        
       } else {
-        this.setState({user:null})
+        this.setState({waiting:false, user:null})
       }
     });
   }
@@ -168,12 +172,17 @@ toggle = () => {
     this.setState({collapse:false});
   }
 
+  setDisplayName(name){
+    this.setState({displayName:name});
+  }
+
   render() {
+    if(this.state.waiting) return(<div></div>);
     return (
       <div>
         {this.state.user ? (
         <BrowserRouter>
-            { this.state.loading ? <p>LOADING</p> : 
+            { this.state.waiting ? <div></div> : 
             <div>
             <Navbar fixed="top" color="primary-color" dark expand="md" >
                 <NavbarBrand href="/">
@@ -210,9 +219,9 @@ toggle = () => {
                         <NavItem>
                             <NavLink onClick={this.closeMenu} to="/standings">Standings</NavLink>
                         </NavItem>
-                        {/* <NavItem>
-                            {this.state.cash && <NavLink to="/add">Cash: {this.state.cash}</NavLink>}
-                        </NavItem> */}
+                        <NavItem>
+                            <NavLink onClick={this.logout} to="/">Sign Out</NavLink>
+                        </NavItem>
                     </NavbarNav>
                 </Collapse>
             </Navbar>
@@ -242,7 +251,7 @@ toggle = () => {
             </div>
           </div>}
         </BrowserRouter>) :
-        (<Auth />)}
+        (<Auth setDisplayName={this.setDisplayName}/>)}
         
       </div>
     )}
